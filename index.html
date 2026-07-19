@@ -175,8 +175,20 @@
 <div class="stage-frame-wrap" id="stage"></div>
 
 <script>
-  var CLID = "p_db0585d2-2da5-4641-b768-657993e9122d";
-  var slug = window.location.search.replace(/^\?/, "");
+  // Default clid used when a link doesn't specify its own
+  var DEFAULT_CLID = "p_db0585d2-2da5-4641-b768-657993e9122d";
+
+  var params = new URLSearchParams(window.location.search);
+  var slug = params.get("slug");
+  var clid = params.get("clid") || DEFAULT_CLID;
+
+  // Backward-compatible: nexgama.vercel.app?tb-world (no keys, uses default clid)
+  if (!slug) {
+    var raw = window.location.search.replace(/^\?/, "");
+    if (raw && raw.indexOf("=") === -1) {
+      slug = decodeURIComponent(raw);
+    }
+  }
 
   var introEl = document.getElementById("intro");
   var stageEl = document.getElementById("stage");
@@ -188,12 +200,12 @@
 
   if (!slug) {
     titleEl.textContent = "NexGama";
-    subEl.textContent = "Open a link like nexgama.vercel.app?<game-slug> to play a game.";
+    subEl.textContent = "Open a link like nexgama.vercel.app?slug=<game-slug>&clid=<clid> to play a game.";
     document.getElementById("countdown").parentElement.parentElement.style.display = "none";
     statusEl.textContent = "";
     openBtn.style.display = "none";
   } else {
-    var embedUrl = "https://playgama.com/export/game/" + slug + "?clid=" + CLID;
+    var embedUrl = "https://playgama.com/export/game/" + slug + "?clid=" + clid;
 
     function openGame() {
       introEl.style.display = "none";
