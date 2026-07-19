@@ -1,36 +1,148 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NexGama</title>
+<meta name="description" content="Opening your game.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Unbounded:wght@400;500;700&display=swap" rel="stylesheet">
+
 <style>
   :root {
-    --bg: #0b0e17;
-    --surface: #141926;
-    --text: #f1f0f6;
-    --muted: #8b93ab;
-    --accent: #7c5cff;
-    --line: #2a3145;
-    --font: "Segoe UI", "Helvetica Neue", Arial, ui-sans-serif, sans-serif;
-  }
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0; min-height: 100%;
-    background: var(--bg); color: var(--text);
-    font-family: var(--font);
-  }
-  a { color: var(--accent); }
+    --canvas: #fffaf0;
+    --surface-card: #f5f0e0;
+    --surface-dark: #0a1a1a;
+    --ink: #0a0a0a;
+    --body: #3a3a3a;
+    --muted: #6a6a6a;
+    --hairline: #e5e5e5;
+    --accent-violet: #b8a4ed;
 
-  .wrap { max-width: 640px; margin: 0 auto; padding: 60px 24px; text-align: center; }
-  .brand { font-weight: 800; font-size: 22px; margin-bottom: 8px; }
-  .muted { color: var(--muted); font-size: 15px; }
+    --space-xs: 8px;
+    --space-sm: 12px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
 
+    --radius-xl: 24px;
+    --radius-pill: 9999px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--body);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(184,164,237,0.15) 0%, rgba(255,77,139,0.05) 25%, transparent 50%);
+    z-index: -1;
+    animation: rotate-gradient 20s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes rotate-gradient { to { transform: rotate(360deg); } }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+  h1, h3 { font-family: 'Unbounded', sans-serif; color: var(--ink); }
+  a { text-decoration: none; color: inherit; }
+
+  .page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+  }
+
+  .page { max-width: 480px; width: 100%; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    height: 48px;
+    width: 100%;
+    padding: 0 28px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background-color: var(--surface-dark); color: #fff; }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+  .panel {
+    background-color: var(--surface-card);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-pill);
+    background-color: rgba(10,10,10,0.06);
+    font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: var(--space-lg);
+  }
+
+  .panel h1 { font-size: 26px; font-weight: 500; margin-bottom: var(--space-sm); letter-spacing: -0.5px; }
+  .panel p { color: var(--muted); font-size: 14px; max-width: 380px; margin: 0 auto var(--space-md); }
+
+  .timer {
+    width: 100px; height: 100px;
+    margin: var(--space-sm) auto var(--space-lg);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background-color: var(--accent-violet);
+    animation: float 6s ease-in-out infinite;
+  }
+  .timer strong {
+    display: block;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 2.2rem;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .timer span {
+    display: block;
+    color: rgba(10,10,10,0.6);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .status-text { margin-top: var(--space-md); color: var(--muted); font-size: 13px; }
+
+  /* full-screen game stage, shown once countdown finishes */
   .stage-frame-wrap {
     position: fixed; inset: 0;
     width: 100vw; height: 100vh;
     background: #000;
+    display: none;
   }
+  .stage-frame-wrap.active { display: block; }
   .stage-frame-wrap iframe {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
@@ -40,32 +152,74 @@
 </head>
 <body>
 
-<div id="app"></div>
+<div class="page-wrapper" id="intro">
+  <main class="page">
+    <section class="panel">
+      <div class="hero-badge">NexGama</div>
+      <h1 id="title">Opening your game</h1>
+      <p id="subcopy">Your game will open in a few seconds.</p>
+
+      <div class="timer" aria-live="polite">
+        <div>
+          <strong id="countdown">5</strong>
+          <span>seconds</span>
+        </div>
+      </div>
+
+      <button id="open-now" class="btn btn-primary" type="button">Open now</button>
+      <p class="status-text" id="status-text">Please wait…</p>
+    </section>
+  </main>
+</div>
+
+<div class="stage-frame-wrap" id="stage"></div>
 
 <script>
-  // Fixed client id used for every game embed
   var CLID = "p_db0585d2-2da5-4641-b768-657993e9122d";
+  var slug = window.location.search.replace(/^\?/, "");
 
-  // slug = URL path after the domain, e.g. /kendel-7-days-7-styles -> kendel-7-days-7-styles
-  var slug = window.location.pathname.replace(/^\/+|\/+$/g, "");
-
-  var app = document.getElementById("app");
+  var introEl = document.getElementById("intro");
+  var stageEl = document.getElementById("stage");
+  var countdownEl = document.getElementById("countdown");
+  var statusEl = document.getElementById("status-text");
+  var openBtn = document.getElementById("open-now");
+  var titleEl = document.getElementById("title");
+  var subEl = document.getElementById("subcopy");
 
   if (!slug) {
-    // Main page (no slug) — nothing hardcoded, just a simple landing message
-    app.innerHTML =
-      '<div class="wrap">' +
-        '<div class="brand">NexGama</div>' +
-        '<p class="muted">Open a link like <br><b>nexgama.vercel.app/&lt;game-slug&gt;</b><br>to play a game!</p>' +
-      '</div>';
+    titleEl.textContent = "NexGama";
+    subEl.textContent = "Open a link like nexgama.vercel.app?<game-slug> to play a game.";
+    document.getElementById("countdown").parentElement.parentElement.style.display = "none";
+    statusEl.textContent = "";
+    openBtn.style.display = "none";
   } else {
-    // Slug page — build the Playgama URL from the slug and embed it full-screen
     var embedUrl = "https://playgama.com/export/game/" + slug + "?clid=" + CLID;
 
-    app.innerHTML =
-      '<div class="stage-frame-wrap">' +
-        '<iframe src="' + embedUrl + '" title="' + slug + '" allow="fullscreen; accelerometer; camera; clipboard-read; clipboard-write; screen-wake-lock; speaker-selection; web-share; geolocation; gyroscope; microphone; xr-spatial-tracking; autoplay; encrypted-media; picture-in-picture; payment; publickey-credentials-get; publickey-credentials-create; storage-access; attribution-reporting; browsing-topics" frameborder="0" allowfullscreen></iframe>' +
-      '</div>';
+    function openGame() {
+      introEl.style.display = "none";
+      stageEl.innerHTML =
+        '<iframe src="' + embedUrl + '" title="' + slug + '" allow="fullscreen; accelerometer; camera; clipboard-read; clipboard-write; screen-wake-lock; speaker-selection; web-share; geolocation; gyroscope; microphone; xr-spatial-tracking; autoplay; encrypted-media; picture-in-picture; payment; publickey-credentials-get; publickey-credentials-create; storage-access; attribution-reporting; browsing-topics" frameborder="0" allowfullscreen></iframe>';
+      stageEl.classList.add("active");
+    }
+
+    var seconds = 5;
+    countdownEl.textContent = seconds;
+    var timer = setInterval(function () {
+      seconds -= 1;
+      countdownEl.textContent = Math.max(seconds, 0);
+      if (seconds > 0) {
+        statusEl.textContent = "Opening in " + seconds + " seconds…";
+      } else {
+        clearInterval(timer);
+        statusEl.textContent = "Opening now…";
+        openGame();
+      }
+    }, 1000);
+
+    openBtn.addEventListener("click", function () {
+      clearInterval(timer);
+      openGame();
+    });
   }
 </script>
 
