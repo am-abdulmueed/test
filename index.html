@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NexGama</title>
+<style>
+  :root {
+    --bg: #0b0e17;
+    --surface: #141926;
+    --text: #f1f0f6;
+    --muted: #8b93ab;
+    --accent: #7c5cff;
+    --line: #2a3145;
+    --font: "Segoe UI", "Helvetica Neue", Arial, ui-sans-serif, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: var(--font);
+  }
+  a { color: var(--accent); }
+
+  .wrap { max-width: 640px; margin: 0 auto; padding: 60px 24px; text-align: center; }
+  .brand { font-weight: 800; font-size: 22px; margin-bottom: 8px; }
+  .muted { color: var(--muted); font-size: 15px; }
+
+  .stage-frame-wrap {
+    position: fixed; inset: 0;
+    width: 100vw; height: 100vh;
+    background: #000;
+  }
+  .stage-frame-wrap iframe {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    border: 0;
+  }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+  // Fixed client id used for every game embed
+  var CLID = "p_db0585d2-2da5-4641-b768-657993e9122d";
+
+  // slug = URL path after the domain, e.g. /kendel-7-days-7-styles -> kendel-7-days-7-styles
+  var slug = window.location.pathname.replace(/^\/+|\/+$/g, "");
+
+  var app = document.getElementById("app");
+
+  if (!slug) {
+    // Main page (no slug) — nothing hardcoded, just a simple landing message
+    app.innerHTML =
+      '<div class="wrap">' +
+        '<div class="brand">NexGama</div>' +
+        '<p class="muted">Open a link like <br><b>nexgama.vercel.app/&lt;game-slug&gt;</b><br>to play a game.</p>' +
+      '</div>';
+  } else {
+    // Slug page — build the Playgama URL from the slug and embed it full-screen
+    var embedUrl = "https://playgama.com/export/game/" + slug + "?clid=" + CLID;
+
+    app.innerHTML =
+      '<div class="stage-frame-wrap">' +
+        '<iframe src="' + embedUrl + '" title="' + slug + '" allow="fullscreen; accelerometer; camera; clipboard-read; clipboard-write; screen-wake-lock; speaker-selection; web-share; geolocation; gyroscope; microphone; xr-spatial-tracking; autoplay; encrypted-media; picture-in-picture; payment; publickey-credentials-get; publickey-credentials-create; storage-access; attribution-reporting; browsing-topics" frameborder="0" allowfullscreen></iframe>' +
+      '</div>';
+  }
+</script>
+
+</body>
+</html>
